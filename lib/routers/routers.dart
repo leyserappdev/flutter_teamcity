@@ -2,7 +2,8 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import './route_handlers.dart';
 
-class Route {
+class Routes {
+  static String root = '/';
   static String login = '/login';
   static String projects = '/projects';
   static String favoriteProjects = '/favoriteProjects';
@@ -18,6 +19,7 @@ class Route {
       }
     );
 
+    router.define(root, handler: rootHandler);
     router.define(login, handler: loginHandler);
     router.define(projects, handler: projectsHandler);
     router.define(favoriteProjects, handler: favoriteProjectsHandler);

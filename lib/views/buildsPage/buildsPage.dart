@@ -13,7 +13,7 @@ class _BuildsPageState extends State<BuildsPage>{
   @override
   Widget build(BuildContext context){
     return new Container(
-      child: new Text('Build'),
+      child: new Text('Build12312'),
     );
   }
 }

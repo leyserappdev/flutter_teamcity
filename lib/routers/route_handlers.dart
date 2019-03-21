@@ -7,12 +7,7 @@ import '../views/projectsPage/projectsPage.dart';
 
 Handler rootHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-      var hasLogin = false;
-      if (hasLogin){
-        return new ProjectsPage(false);
-      } else {
-        return new LoginPage();
-      }
+  return new ProjectsPage(false);
 });
 
 Handler projectsHandler = new Handler(

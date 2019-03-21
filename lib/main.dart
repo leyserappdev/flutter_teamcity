@@ -2,12 +2,26 @@ import 'package:flutter/material.dart';
 import 'routers/application.dart';
 import 'package:fluro/fluro.dart';
 import './routers/routers.dart';
+import './utils/sharedPreferences.dart';
+import './views/loginPage/loginPage.dart';
+import './views/projectsPage/projectsPage.dart';
+
+SpUtil spUtil;
 
 class MyApp extends StatelessWidget {
   MyApp() {
     final router = new Router();
     Routes.configureRoutes(router);
     Application.router = router;
+  }
+
+  Widget showHomePage() {
+    bool hasLogin = spUtil.getBool(SharedPreferencesKeys.hasLogin);
+    if (hasLogin == null || !hasLogin) {
+      return LoginPage();
+    } else {
+      return ProjectsPage(false);
+    }
   }
 
   @override
@@ -21,6 +35,7 @@ class MyApp extends StatelessWidget {
         //TODO: complete theme data and font
       ),
       onGenerateRoute: Application.router.generator,
+      home: showHomePage(),
     );
     print('initial route = ${app.initialRoute}');
     return app;
@@ -28,6 +43,7 @@ class MyApp extends StatelessWidget {
 }
 
 //Global Entry
-void main() {
+void main() async {
+  spUtil = await SpUtil.getInstance();
   runApp(MyApp());
 }

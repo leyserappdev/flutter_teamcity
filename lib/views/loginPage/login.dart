@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
-import 'dart:convert';
 
 Future<Response> validTeamcityUserPassword(
-    {String userName, String password, String serverUrl}) async {
+    {String basicAuthKey, String serverUrl}) async {
   var dio = Dio();
-  var basicAuthHeader =
-      'Basic ${base64.encode(utf8.encode('$userName:$password'))}';
+  var basicAuthHeader = 'Basic $basicAuthKey';
 
   Response response;
   try {

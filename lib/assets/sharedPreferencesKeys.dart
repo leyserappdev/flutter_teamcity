@@ -6,4 +6,6 @@ class SharedPreferencesKeys {
   static String teamCityServerUrl = 'teamCityServerUrl';
 
   static String hasLogin = 'hasLogin';
+
+  static String basicKey = 'httpBasicKey';
 }

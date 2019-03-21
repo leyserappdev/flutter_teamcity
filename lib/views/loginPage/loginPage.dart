@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_teamcity/utils/util.dart';
 import 'package:dio/dio.dart';
+import 'dart:convert';
 import 'package:fluro/fluro.dart';
 import '../../routers/application.dart';
 import '../../assets/sharedPreferencesKeys.dart';
@@ -53,14 +54,18 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> doLogin() async {
     //验证TeamCity用户名密码
+    var authKey = base64.encode(
+        utf8.encode('${userNameController.text}:${passwordController.text}'));
+
     var res = await validTeamcityUserPassword(
-        userName: userNameController.text,
-        password: passwordController.text,
-        serverUrl: serverUrlController.text);
+        basicAuthKey: authKey, serverUrl: serverUrlController.text);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (res != null && res.statusCode == 200) {
+      //用户密码验证成功之后 把一些关键信息保持起来
+      //TODO: 抽到util里面
       await prefs.setBool(SharedPreferencesKeys.hasLogin, true);
+      await prefs.setString(SharedPreferencesKeys.basicKey, authKey);
       await prefs.setString(
           SharedPreferencesKeys.loginUserName, userNameController.text);
       await prefs.setString(

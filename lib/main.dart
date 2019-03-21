@@ -4,7 +4,7 @@ import 'package:fluro/fluro.dart';
 import './routers/routers.dart';
 import './utils/sharedPreferences.dart';
 import './views/loginPage/loginPage.dart';
-import './views/projectsPage/projectsPage.dart';
+import './views/HomePage.dart';
 
 SpUtil spUtil;
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     if (hasLogin == null || !hasLogin) {
       return LoginPage();
     } else {
-      return ProjectsPage(false);
+      return HomePage();
     }
   }
 

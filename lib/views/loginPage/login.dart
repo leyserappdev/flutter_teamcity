@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
+import '../../utils/http.dart';
 
 Future<Response> validTeamcityUserPassword(
     {String basicAuthKey, String serverUrl}) async {
-  var dio = Dio();
   var basicAuthHeader = 'Basic $basicAuthKey';
 
   Response response;

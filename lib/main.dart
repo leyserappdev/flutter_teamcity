@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'routers/application.dart';
+import 'package:dio/dio.dart';
 import 'package:fluro/fluro.dart';
 import './routers/routers.dart';
 import './utils/sharedPreferences.dart';
 import './views/loginPage/loginPage.dart';
 import './views/HomePage.dart';
+import './utils/http.dart';
 
 SpUtil spUtil;
 
@@ -44,6 +46,8 @@ class MyApp extends StatelessWidget {
 
 //Global Entry
 void main() async {
+  dio.interceptors..add(LogInterceptor());
+  dio.options.receiveTimeout = 10000;
   spUtil = await SpUtil.getInstance();
   runApp(MyApp());
 }

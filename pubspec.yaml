@@ -26,6 +26,7 @@ dependencies:
   fluro: "^1.4.0"
   shared_preferences: "^0.5.1"
   dio: "^2.1.0"
+  xml2json: "^3.0.0"
 
 dev_dependencies:
   flutter_test:

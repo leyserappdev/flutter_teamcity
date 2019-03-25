@@ -8,4 +8,6 @@ class SharedPreferencesKeys {
   static String hasLogin = 'hasLogin';
 
   static String basicKey = 'httpBasicKey';
+
+  static String favoriteProjectIds = 'favoriteProjectIds';
 }

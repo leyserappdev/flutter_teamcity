@@ -23,6 +23,9 @@ class Project implements ProjectInterface {
 
   String parentProjectId;
 
+  //for generate tree structure.
+  List<Project> children;
+
   Project(
       {this.id, this.name, this.description, this.href, this.parentProjectId});
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import '../../model/project.dart';
 import '../../utils/http.dart';
+import '../../utils/sharedPreferences.dart';
 
 Future<List<Project>> fetchProjects() async {
   List<Project> result = List<Project>();
@@ -37,7 +38,57 @@ class ProjectsPage extends StatefulWidget {
 class _ProjectsPageState extends State<ProjectsPage> {
   bool _isFavorite;
 
-  _ProjectsPageState(this._isFavorite);
+  SpUtil _spUtil;
+
+  _ProjectsPageState(bool isFavorite) {
+    _isFavorite = isFavorite;
+    init();
+  }
+
+  Future init() async {
+    _spUtil = await SpUtil.getInstance();
+  }
+
+  List<String> getFavoriteProjectIds() {
+    var ids = _spUtil.getStringList(SharedPreferencesKeys.favoriteProjectIds);
+    return ids ?? [];
+  }
+
+  void addFavoriteProjectId(String id) {
+    var ids = getFavoriteProjectIds();
+    if (ids != null && !ids.contains(id)) {
+      ids.add(id);
+      _spUtil.putStringList(SharedPreferencesKeys.favoriteProjectIds, ids);
+    }
+  }
+
+  void removeFavoriteProjectId(String id) {
+    var ids = getFavoriteProjectIds();
+    if (ids != null && ids.contains(id)) {
+      ids.removeWhere((item) => item == id);
+      _spUtil.putStringList(SharedPreferencesKeys.favoriteProjectIds, ids);
+    }
+  }
+
+  Project _generateTree(List<Project> projects) {
+    var rootNode =
+        projects.firstWhere((project) => project.parentProjectId == null);
+
+    _generateSubTree(projects, rootNode);
+
+    return rootNode;
+  }
+
+  _generateSubTree(List<Project> projects, Project curNode) {
+    var children = projects
+        .where((project) => project.parentProjectId == curNode.id)
+        .toList(growable: false);
+
+    if (children != null && children.length > 0) {
+      curNode.children = children;
+      children.forEach((child) => _generateSubTree(projects, child));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,19 +97,55 @@ class _ProjectsPageState extends State<ProjectsPage> {
         future: fetchProjects(),
         builder: (context, snap) {
           if (snap.hasData && snap.data.length > 0) {
-             return ListView.builder(
-                 itemBuilder: (BuildContext context, int index){
-                   var item = snap.data[index];
-                   return ListTile(
-                     key: Key(item.id),
-                     title: Text(item.name),
-                     subtitle: Text(item.description),
-                     leading: Icon(Icons.alarm_on),
-                   );
-                 },
-                  itemCount: snap.data.length,
-             );
-            //return Text('sadsda');
+            var datas = snap.data.toList();
+            _generateTree(datas);
+
+            var favoriteIds = getFavoriteProjectIds();
+
+            //only show leaf node
+            var leafNodesIter = datas.where(
+                (data) => data.children == null || data.children.length == 0);
+
+            if (_isFavorite) {
+              leafNodesIter =
+                  leafNodesIter.where((node) => favoriteIds.contains(node.id));
+            }
+            var leafNodes = leafNodesIter.toList();
+
+            return ListView.separated(
+              separatorBuilder: (BuildContext context, int index) => Divider(),
+              itemBuilder: (BuildContext context, int index) {
+                var item = leafNodes[index];
+                bool alreadyFavorite = favoriteIds.contains(item.id);
+                return ListTile(
+                  key: Key(item.id),
+                  title: Text(item.name),
+                  subtitle:
+                      item.description == null ? null : Text(item.description),
+                  trailing: _isFavorite
+                      ? null
+                      : (alreadyFavorite
+                          ? IconButton(
+                              icon: Icon(Icons.favorite),
+                              onPressed: () {
+                                setState(() {
+                                  removeFavoriteProjectId(item.id);
+                                });
+                              },
+                            )
+                          : IconButton(
+                              icon: Icon(Icons.favorite_border),
+                              onPressed: () {
+                                setState(() {
+                                  addFavoriteProjectId(item.id);
+                                });
+                              },
+                            )),
+                  onTap: () {},
+                );
+              },
+              itemCount: leafNodes.length,
+            );
           } else if (snap.hasError) {
             return Text(snap.error);
           }

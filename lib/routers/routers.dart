@@ -5,7 +5,9 @@ import './route_handlers.dart';
 class Routes {
   static String root = '/';
   static String login = '/login';
-  static String builds = '/builds/:projectId';
+  static String buildType = '/buildType/:projectId';
+  static String builds = '/builds/:buildTypeId';
+
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = new Handler(
@@ -16,6 +18,7 @@ class Routes {
 
     router.define(root, handler: rootHandler);
     router.define(login, handler: loginHandler);
+    router.define(buildType, handler: buildTypeHandler);
     router.define(builds, handler: buildsHandler);
   }
 }

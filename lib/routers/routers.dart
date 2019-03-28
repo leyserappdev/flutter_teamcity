@@ -5,8 +5,8 @@ import './route_handlers.dart';
 class Routes {
   static String root = '/';
   static String login = '/login';
-  static String buildType = '/buildType/:projectId';
-  static String builds = '/builds/:buildTypeId';
+  static String buildType = '/buildType/:projectId/:projectName';
+  static String builds = '/builds/:buildTypeId/:buildTypeName';
 
 
   static void configureRoutes(Router router) {

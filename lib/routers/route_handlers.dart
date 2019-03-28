@@ -17,13 +17,15 @@ Handler loginHandler = new Handler(
 
 Handler buildTypeHandler = new Handler(
   handlerFunc: (BuildContext context, Map<String, List<String>> params){
-    int projectId = int.tryParse(params["projectId"]?.first);
-    return new BuildTypePage(projectId);
+    String projectId = params["projectId"]?.first;
+    String projectName = params["projectName"]?.first;
+    return new BuildTypePage(projectId, projectName);
   }
 );
 
 Handler buildsHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  int buildTypeId = int.tryParse(params["buildTypeId"]?.first);
-  return new BuildsPage(buildTypeId);
+  String buildTypeId = params["buildTypeId"]?.first;
+  String buildTypeName = params["buildTypeName"]?.first;
+  return new BuildsPage(buildTypeId, buildTypeName);
 });

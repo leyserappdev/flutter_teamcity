@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:fluro/fluro.dart';
 import 'dart:convert';
 import '../../model/project.dart';
 import '../../utils/http.dart';
 import '../../utils/sharedPreferences.dart';
+import '../../routers/application.dart';
 
 Future<List<Project>> fetchProjects() async {
   List<Project> result = List<Project>();
@@ -141,7 +143,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                 });
                               },
                             )),
-                  onTap: () {},
+                  onTap: () {
+                    Application.router.navigateTo(context, '/buildType/${item.id}/${item.name}');
+                  },
                 );
               },
               itemCount: leafNodes.length,

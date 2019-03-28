@@ -15,9 +15,13 @@ Future<List<Project>> fetchProjects() async {
     Map<String, dynamic> jsonData = json.decode(response.data);
     var projects = jsonData['projects']['project'];
 
-    projects.forEach((item) {
-      result.add(Project.fromJson(item));
-    });
+    if (projects is Map) {
+      result.add(Project.fromJson(projects));
+    } else {
+      projects.forEach((item) {
+        result.add(Project.fromJson(item));
+      });
+    }
   } else {
     // If that call was not successful, throw an error.
     //throw Exception('Failed to load projects');
@@ -144,7 +148,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
                               },
                             )),
                   onTap: () {
-                    Application.router.navigateTo(context, '/buildType/${item.id}/${item.name}');
+                    Application.router.navigateTo(
+                        context, '/buildType/${item.id}/${item.name}');
                   },
                 );
               },
@@ -154,7 +159,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
             return Text(snap.error);
           }
 
-          return CircularProgressIndicator();
+          return LinearProgressIndicator();
         },
       ),
     );

@@ -99,7 +99,7 @@ class _BuildTypePageState extends State<BuildTypePage> {
             } else if (snap.hasError) {
               return Text(snap.error);
             }
-            return CircularProgressIndicator();
+            return LinearProgressIndicator();
           },
         ));
   }

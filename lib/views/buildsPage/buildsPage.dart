@@ -16,7 +16,7 @@ Future<List<Build>> fetchBuild(String projectId) async {
     Map<String, dynamic> jsonData = json.decode(response.data);
     var builds = jsonData['builds'];
     var build = builds['build'];
-    if (builds['count'] == '1') {
+    if (build is Map) {
       result.add(Build.fromJson(build));
     } else {
       build.forEach((item) {
@@ -40,9 +40,15 @@ Future<List<Artifact>> fetchArtifact(String buildId) async {
     var files = jsonData['files'];
     var file = files['file'];
 
-    file.forEach((item) {
-      result.add(Artifact.fromJson(item));
-    });
+    if (file == null) {
+      return result;
+    } else if (file is Map) {
+      result.add(Artifact.fromJson(file));
+    } else {
+      file.forEach((item) {
+        result.add(Artifact.fromJson(item));
+      });
+    }
   } else {
     // If that call was not successful, throw an error.
     //throw Exception('Failed to load projects');
@@ -103,7 +109,7 @@ class _BuildsPageState extends State<BuildsPage> {
 
                   return ExpansionTile(
                     key: Key(item.id),
-                    initiallyExpanded: false,
+                    initiallyExpanded: index == 0,
                     onExpansionChanged: (bool isExpand) {},
                     title: Row(
                       children: <Widget>[
@@ -132,10 +138,11 @@ class _BuildsPageState extends State<BuildsPage> {
                                     '${(currentFile.size / (1024 * 1024)).toStringAsFixed(2)}Mb';
                                 DateTime modifeTime = DateTime.parse(
                                     currentFile.modificationTime);
-                                String dateTimeStr =
-                                    modifeTime.toIso8601String().substring(0, 19)
+                                String dateTimeStr = modifeTime
+                                    .toIso8601String()
+                                    .substring(0, 19)
                                     .replaceFirst('T', ' ');
-                                    
+
                                 return ListTile(
                                   title: Row(
                                     children: <Widget>[
@@ -145,14 +152,43 @@ class _BuildsPageState extends State<BuildsPage> {
                                       Text(' ${currentFile.name}')
                                     ],
                                   ),
-                                  subtitle: Row(children: <Widget>[
-                                    Expanded(child: Text(dateTimeStr),),
-                                    Text(sizeFormat)
-                                  ],),
+                                  subtitle: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Text(dateTimeStr),
+                                      ),
+                                      Text(sizeFormat)
+                                    ],
+                                  ),
                                   trailing: IconButton(
                                     icon: Icon(Icons.file_download),
                                     onPressed: () {
-                                      var a = 1;
+                                      return showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text('File Download'),
+                                              content: SingleChildScrollView(
+                                                child: Text(
+                                                    'Do you want to download the file ${currentFile.name}(${sizeFormat}) to device?'),
+                                              ),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  child: Text('Cancel'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                FlatButton(
+                                                  child: Text('Ok'),
+                                                  onPressed: () {
+                                                    var a = 1;
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          });
                                     },
                                   ),
                                 );
@@ -163,9 +199,20 @@ class _BuildsPageState extends State<BuildsPage> {
                               );
                             } else if (snap.hasError) {
                               return Text(snap.error);
+                            } else if (snap.hasData && snap.data.length == 0){
+                              //TODO： 把这个组件抽为共通的
+                              return Padding(
+                                padding: EdgeInsets.all(15.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(Icons.warning, color: Colors.blueGrey,),
+                                    Text('  There is no Data')
+                                  ],
+                                ),
+                              );
                             }
 
-                            return CircularProgressIndicator();
+                            return LinearProgressIndicator();
                           },
                         ),
                       )
@@ -177,7 +224,7 @@ class _BuildsPageState extends State<BuildsPage> {
             } else if (snap.hasError) {
               return Text(snap.error);
             }
-            return CircularProgressIndicator();
+            return LinearProgressIndicator();
           },
         ));
   }

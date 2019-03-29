@@ -6,6 +6,8 @@ import '../../routers/application.dart';
 import 'package:flutter/material.dart';
 import '../../model/build.dart';
 import '../../model/artifact.dart';
+import '../../utils/util.dart';
+import '../../utils/fileDownloader.dart';
 
 Future<List<Build>> fetchBuild(String projectId) async {
   List<Build> result = List<Build>();
@@ -71,9 +73,72 @@ class _BuildsPageState extends State<BuildsPage> {
   String _buildTypeId;
   String _buildTypeName;
 
+  String _taskId;
+
+  bool _isLoading = false;
+  //rio: 暂时不支持多任务下载
+  bool _isDownloading = false;
+
   _BuildsPageState(buildTypeId, buildTypeName) {
     _buildTypeId = buildTypeId;
     _buildTypeName = buildTypeName;
+  }
+
+  @override
+  initState() {
+    super.initState();
+
+    FileDownloader.registerCallback(
+        (String id, DownloadTaskStatus status, int progress) {
+      if (status == DownloadTaskStatus.complete) {
+        FileDownloader.openAndPreview(id);
+      }
+      print(
+          'Download task ($id) is in status ($status) and process ($progress)');
+
+      setState(() {
+        _isDownloading = (status == DownloadTaskStatus.running ||
+            status == DownloadTaskStatus.enqueued ||
+            status == DownloadTaskStatus.paused);
+      });
+    });
+  }
+
+  Future downloadFile(String buildId, String fileName) async {
+    bool hasPermission = await CheckStoragePermission();
+
+    if (!hasPermission) {
+      //TODO: 提示
+      return;
+    }
+
+    var baseUrl = await NetUtils.getBaseUrl();
+    var authKey = await NetUtils.getAuthKey();
+    var basicAuthHeader = 'Basic $authKey';
+
+    var url = '${baseUrl}/app/rest/builds/480037/artifacts/content/${fileName}';
+    // var forTest =
+    //     'http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Android-Programming-Cookbook.pdf';
+
+    String savePath = await GetFileDownloadPath();
+
+    _taskId = await FileDownloader.enqueue(
+        url: url,
+        headers: {'Authorization': basicAuthHeader},
+        saveDir: savePath,
+        fileName: fileName,
+        showNotification: true,
+        openFileFromNotification: true);
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    FileDownloader.registerCallback(null);
+    super.dispose();
   }
 
   @override
@@ -81,6 +146,12 @@ class _BuildsPageState extends State<BuildsPage> {
     return new Scaffold(
         appBar: AppBar(
           title: Text('Builds($_buildTypeName)'),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Text('Open'),
+          onPressed: () {
+            //FileDownloader.openAndPreview(_taskId);
+          },
         ),
         body: FutureBuilder<List<Build>>(
           future: fetchBuild(_buildTypeId),
@@ -96,9 +167,6 @@ class _BuildsPageState extends State<BuildsPage> {
                   if (item.status == 'SUCCESS') {
                     statusIcon = Icons.error;
                     color = Colors.redAccent;
-
-                    // statusIcon = Icons.done;
-                    // color = Colors.greenAccent;
                   } else if (item.status == 'FAILURE') {
                     statusIcon = Icons.error;
                     color = Colors.redAccent;
@@ -175,15 +243,20 @@ class _BuildsPageState extends State<BuildsPage> {
                                               ),
                                               actions: <Widget>[
                                                 FlatButton(
-                                                  child: Text('Cancel'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
+                                                    child: Text('Cancel'),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    }),
                                                 FlatButton(
                                                   child: Text('Ok'),
                                                   onPressed: () {
-                                                    var a = 1;
+                                                    setState(() {
+                                                      _isLoading = true;
+                                                    });
+                                                    Navigator.of(context).pop();
+                                                    downloadFile(item.id,
+                                                        currentFile.name);
                                                   },
                                                 ),
                                               ],
@@ -194,18 +267,31 @@ class _BuildsPageState extends State<BuildsPage> {
                                 );
                               }).toList();
 
+                              List<Widget> allChildren = [];
+
+                              if (_isLoading) {
+                                allChildren.add(LinearProgressIndicator(
+                                  semanticsLabel: 'Loading...',
+                                ));
+                              }
+
+                              allChildren.addAll(children);
+
                               return Column(
-                                children: children,
+                                children: allChildren,
                               );
                             } else if (snap.hasError) {
                               return Text(snap.error);
-                            } else if (snap.hasData && snap.data.length == 0){
+                            } else if (snap.hasData && snap.data.length == 0) {
                               //TODO： 把这个组件抽为共通的
                               return Padding(
                                 padding: EdgeInsets.all(15.0),
                                 child: Row(
                                   children: <Widget>[
-                                    Icon(Icons.warning, color: Colors.blueGrey,),
+                                    Icon(
+                                      Icons.warning,
+                                      color: Colors.blueGrey,
+                                    ),
                                     Text('  There is no Data')
                                   ],
                                 ),

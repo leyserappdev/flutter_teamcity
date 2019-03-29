@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
         //TODO: complete theme data and font
       ),
       onGenerateRoute: Application.router.generator,
+      debugShowCheckedModeBanner: false,
       home: showHomePage(),
     );
     print('initial route = ${app.initialRoute}');

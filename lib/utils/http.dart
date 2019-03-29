@@ -9,10 +9,22 @@ class NetUtils {
 
   static Xml2Json transformer = Xml2Json();
 
-  static Future get(String url, {Map<String, dynamic> params}) async {
+  static Future getBaseUrl() async {
     _spUtil = await SpUtil.getInstance();
     var baseUrl = _spUtil.getString(SharedPreferencesKeys.teamCityServerUrl);
+    return baseUrl;
+  }
+
+  static Future getAuthKey() async {
+    _spUtil = await SpUtil.getInstance();
     var authKey = _spUtil.getString(SharedPreferencesKeys.basicKey);
+    return authKey;
+  }
+
+  static Future get(String url, {Map<String, dynamic> params}) async {
+    _spUtil = await SpUtil.getInstance();
+    var baseUrl = await getBaseUrl();
+    var authKey = await getAuthKey();
 
     var basicAuthHeader = 'Basic $authKey';
 

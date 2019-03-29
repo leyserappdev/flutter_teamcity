@@ -147,12 +147,6 @@ class _BuildsPageState extends State<BuildsPage> {
         appBar: AppBar(
           title: Text('Builds($_buildTypeName)'),
         ),
-        floatingActionButton: FloatingActionButton(
-          child: Text('Open'),
-          onPressed: () {
-            //FileDownloader.openAndPreview(_taskId);
-          },
-        ),
         body: FutureBuilder<List<Build>>(
           future: fetchBuild(_buildTypeId),
           builder: (context, snap) {

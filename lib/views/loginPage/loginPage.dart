@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_teamcity/utils/util.dart';
-import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:fluro/fluro.dart';
 import '../../routers/application.dart';
-import '../../assets/sharedPreferencesKeys.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import './login.dart';
 
 class LoginPage extends StatefulWidget {
@@ -59,24 +56,17 @@ class _LoginPageState extends State<LoginPage> {
 
     var res = await validTeamcityUserPassword(
         basicAuthKey: authKey, serverUrl: serverUrlController.text);
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     if (res != null && res.statusCode == 200) {
       //用户密码验证成功之后 把一些关键信息保持起来
-      //TODO: 抽到util里面
-      await prefs.setBool(SharedPreferencesKeys.hasLogin, true);
-      await prefs.setString(SharedPreferencesKeys.basicKey, authKey);
-      await prefs.setString(
-          SharedPreferencesKeys.loginUserName, userNameController.text);
-      await prefs.setString(
-          SharedPreferencesKeys.loginUserPWD, passwordController.text);
-      await prefs.setString(
-          SharedPreferencesKeys.teamCityServerUrl, serverUrlController.text);
+      await login(
+          authKey: authKey,
+          serverUrl: serverUrlController.text,
+          pwd: passwordController.text,
+          userName: userNameController.text);
 
       Application.router.navigateTo(context, '/projects',
           transition: TransitionType.inFromBottom, clearStack: true);
     } else {
-      await prefs.setBool(SharedPreferencesKeys.hasLogin, false);
       String errorInfo = res.data.toString() ??
           'Some error occured, Please make sure your name/pwd/url is right';
       return showDialog<void>(

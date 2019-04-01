@@ -105,7 +105,7 @@ class _BuildsPageState extends State<BuildsPage> {
   }
 
   Future downloadFile(String buildId, String fileName) async {
-    bool hasPermission = await CheckStoragePermission();
+    bool hasPermission = await checkStoragePermission();
 
     if (!hasPermission) {
       //TODO: 提示
@@ -120,7 +120,7 @@ class _BuildsPageState extends State<BuildsPage> {
     // var forTest =
     //     'http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Android-Programming-Cookbook.pdf';
 
-    String savePath = await GetFileDownloadPath();
+    String savePath = await getFileDownloadPath();
 
     _taskId = await FileDownloader.enqueue(
         url: url,

@@ -118,6 +118,16 @@ class _ProjectsPageState extends State<ProjectsPage> {
             }
             var leafNodes = leafNodesIter.toList();
 
+            if (_isFavorite && leafNodes.length == 0) {
+              return Padding(
+                padding: EdgeInsets.all(15),
+                child: Text(
+                  'There is no favorite project.',
+                  style: TextStyle(fontSize: 16),
+                ),
+              );
+            }
+
             return ListView.separated(
               separatorBuilder: (BuildContext context, int index) => Divider(),
               itemBuilder: (BuildContext context, int index) {
@@ -126,9 +136,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 return ListTile(
                   key: Key(item.id),
                   title: Text(item.name),
-                  subtitle:
-                      item.description == null ? null : Text(item.description),
-                  trailing: _isFavorite
+                  leading: _isFavorite
                       ? null
                       : (alreadyFavorite
                           ? IconButton(
@@ -147,6 +155,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                 });
                               },
                             )),
+                  subtitle:
+                      item.description == null ? null : Text(item.description),
+                  trailing: Icon(Icons.keyboard_arrow_right),
                   onTap: () {
                     Application.router.navigateTo(
                         context, '/buildType/${item.id}/${item.name}');

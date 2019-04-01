@@ -5,6 +5,14 @@ import '../views/loginPage/loginPage.dart';
 import '../views/buildTypePage/buildTypePage.dart';
 import '../views/HomePage.dart';
 
+Handler notFoundHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  var text = 'Router ${params.toString()} was not Found!';
+  print(text);
+  //TODO: rio. 调查初次登录后route为空的问题。 临时性的先把路由导航到Homepage
+  return HomePage();
+});
+
 Handler rootHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return new HomePage();
@@ -16,12 +24,11 @@ Handler loginHandler = new Handler(
 });
 
 Handler buildTypeHandler = new Handler(
-  handlerFunc: (BuildContext context, Map<String, List<String>> params){
-    String projectId = params["projectId"]?.first;
-    String projectName = params["projectName"]?.first;
-    return new BuildTypePage(projectId, projectName);
-  }
-);
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  String projectId = params["projectId"]?.first;
+  String projectName = params["projectName"]?.first;
+  return new BuildTypePage(projectId, projectName);
+});
 
 Handler buildsHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {

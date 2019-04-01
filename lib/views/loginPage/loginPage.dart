@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
           userName: userNameController.text);
 
       Application.router.navigateTo(context, '/projects',
-          transition: TransitionType.inFromBottom, clearStack: true);
+          transition: TransitionType.inFromBottom, clearStack: false);
     } else {
       String errorInfo = res.data.toString() ??
           'Some error occured, Please make sure your name/pwd/url is right';
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.symmetric(vertical: 18),
                     ),
                     Text(
-                      'Teamcity Build Download',
+                      'Teamcity Build Downloader',
                       style: _subTitleTextStyle,
                     )
                   ],

@@ -8,13 +8,8 @@ class Routes {
   static String buildType = '/buildType/:projectId/:projectName';
   static String builds = '/builds/:buildTypeId/:buildTypeName';
 
-
   static void configureRoutes(Router router) {
-    router.notFoundHandler = new Handler(
-        handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-      //TODO: 丰满下404 Page
-      print('Router was not Found!');
-    });
+    router.notFoundHandler = notFoundHandler;
 
     router.define(root, handler: rootHandler);
     router.define(login, handler: loginHandler);

@@ -29,18 +29,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = new MaterialApp(
-      title: 'Leyser TeamCity APP Downloader',
-      theme: new ThemeData(
-        buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-        accentColor: Colors.green,
-        primaryColor: Colors.lightBlue,
-        //TODO: complete theme data and font
-      ),
-      onGenerateRoute: Application.router.generator,
-      debugShowCheckedModeBanner: false,
-      home: showHomePage(),
-    );
-    print('initial route = ${app.initialRoute}');
+        title: 'Leyser TeamCity APP Downloader',
+        theme: new ThemeData(
+          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          accentColor: Colors.green,
+          primaryColor: Colors.lightBlue,
+          //TODO: complete theme data and font
+        ),
+        onGenerateRoute: Application.router.generator,
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        home: showHomePage());
+    print('......initial route = ${app.initialRoute}');
     return app;
   }
 }

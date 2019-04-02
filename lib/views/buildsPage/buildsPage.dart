@@ -283,6 +283,32 @@ class _BuildsPageState extends State<BuildsPage> {
                                               trailing: IconButton(
                                                 icon: Icon(Icons.file_download),
                                                 onPressed: () {
+                                                  if ((currentFile.size /
+                                                          (1024 * 1024)) >
+                                                      50.0) {
+                                                    return _scaffoldKey
+                                                        .currentState
+                                                        .showSnackBar(SnackBar(
+                                                      key: Key(
+                                                          'FileSizeIsTooLarge'),
+                                                      content: Row(
+                                                        children: <Widget>[
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10),
+                                                            child: Icon(
+                                                                Icons.warning),
+                                                          ),
+                                                          Expanded(
+                                                            child: Text(
+                                                                'You can only download file that size less than 50Mb.'),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ));
+                                                  }
                                                   return showDialog<void>(
                                                       context: context,
                                                       barrierDismissible: false,

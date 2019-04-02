@@ -17,26 +17,26 @@ class HexColor extends Color {
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
 
-//TODO: 不知道这个方法是否可以做成通用的
-Future<bool> checkStoragePermission() async {
+Future<bool> checkPermission(PermissionGroup permission) async {
   if (Platform.isAndroid) {
-    PermissionStatus permissionStatus = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.storage);
+    PermissionStatus permissionStatus =
+        await PermissionHandler().checkPermissionStatus(permission);
     if (permissionStatus != PermissionStatus.granted) {
-      Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler()
-              .requestPermissions([PermissionGroup.storage]);
-
-      if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
-        return true;
-      }
+      return await requestionPermission(permission);
     } else {
       return true;
     }
   } else {
-    return true;
+    return false;
   }
+}
 
+Future<bool> requestionPermission(PermissionGroup permission) async {
+  if (Platform.isAndroid) {
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([permission]);
+    return permissions[permission] == PermissionStatus.granted;
+  }
   return false;
 }
 

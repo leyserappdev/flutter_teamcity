@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
           userName: userNameController.text);
 
       Application.router.navigateTo(context, '/projects',
-          transition: TransitionType.inFromBottom, clearStack: false);
+          transition: TransitionType.inFromBottom, clearStack: true);
     } else {
       String errorInfo = res.data.toString() ??
           'Some error occured, Please make sure your name/pwd/url is right';

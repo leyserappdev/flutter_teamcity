@@ -10,7 +10,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="flutter_teamcity"
+        android:label="Leyser Teamcity Downloader"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -166,6 +166,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                       : (alreadyFavorite
                           ? IconButton(
                               icon: Icon(Icons.favorite),
+                              color: Colors.redAccent,
                               onPressed: () {
                                 setState(() {
                                   removeFavoriteProjectId(item.id);

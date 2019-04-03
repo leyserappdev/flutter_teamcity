@@ -153,7 +153,8 @@ class _BuildsPageState extends State<BuildsPage> {
     var authKey = await NetUtils.getAuthKey();
     var basicAuthHeader = 'Basic $authKey';
 
-    var url = '${baseUrl}/app/rest/builds/${buildId}/artifacts/content/${fileName}';
+    var url =
+        '${baseUrl}/app/rest/builds/${buildId}/artifacts/content/${fileName}';
 
     String savePath = await getFileDownloadPath();
 
@@ -320,8 +321,31 @@ class _BuildsPageState extends State<BuildsPage> {
                                                               'File Download'),
                                                           content:
                                                               SingleChildScrollView(
-                                                            child: Text(
-                                                                'Do you want to download the file ${currentFile.name}(${sizeFormat}) to device?'),
+                                                            child: Text.rich(
+                                                              TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                        text:
+                                                                            'Do you want to download the file'),
+                                                                    TextSpan(
+                                                                        text:
+                                                                            ' ${currentFile.name}',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.blueAccent,
+                                                                            fontWeight: FontWeight.bold)),
+                                                                    TextSpan(
+                                                                        text:
+                                                                            ' (${sizeFormat}) ',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.blueAccent,
+                                                                            fontWeight: FontWeight.bold)),
+                                                                    TextSpan(
+                                                                        text:
+                                                                            'to device'),
+                                                                  ]),
+                                                            ),
                                                           ),
                                                           actions: <Widget>[
                                                             FlatButton(

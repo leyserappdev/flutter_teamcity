@@ -4,6 +4,7 @@ import '../../utils/http.dart';
 import 'package:flutter/material.dart';
 import '../../routers/application.dart';
 import '../../model/buildType.dart';
+import '../../widgets/components/dataEmptyTip.dart';
 
 String extractBuildTypeStr(String input) {
   var startIndex = input.indexOf('"buildTypes');
@@ -40,7 +41,9 @@ Future<List<BuildType>> fetchBuildTypes(String projectId) async {
     Map<String, dynamic> jsonData =
         json.decode(extractBuildTypeStr(response.data));
     var buildTypes = jsonData['buildTypes']['buildType'];
-
+    if (buildTypes == null){
+      return result;
+    }
     buildTypes.forEach((item) {
       result.add(BuildType.fromJson(item));
     });
@@ -98,8 +101,10 @@ class _BuildTypePageState extends State<BuildTypePage> {
               );
             } else if (snap.hasError) {
               return Text(snap.error);
+            } else if (snap.hasData && snap.data.length == 0){
+              return DataEmptyTip();
             }
-            return LinearProgressIndicator();
+            return Center(child: CircularProgressIndicator(),);
           },
         ));
   }

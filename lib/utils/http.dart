@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:xml2json/xml2json.dart';
 import './sharedPreferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 var dio = Dio();
 
@@ -28,7 +30,7 @@ class NetUtils {
 
     var basicAuthHeader = 'Basic $authKey';
 
-    Response response;
+    Response response = new Response();
     try {
       response = await dio.get('$baseUrl/$url',
           queryParameters: params,
@@ -39,6 +41,12 @@ class NetUtils {
         response.data = transformer.toGData();
       }
     } on DioError catch (e) {
+      Fluttertoast.showToast(
+        msg: '请求失败，确保自己连接葡萄城内网wifi,确保Teamcity服务可用。',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER
+      );
+      print('Dio error>>>>>>>>>>>>>>>>>>>>>>>>:');
       if (e.response != null) {
         response = e.response;
         print(e.response.data);

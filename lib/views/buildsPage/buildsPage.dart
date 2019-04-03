@@ -11,6 +11,7 @@ import '../../model/artifact.dart';
 import '../../utils/util.dart';
 import '../../utils/fileDownloader.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import '../../widgets/components/dataEmptyTip.dart';
 
 Future<List<Build>> fetchBuild(String projectId,
     [bool isPullRefresh = false]) async {
@@ -152,7 +153,7 @@ class _BuildsPageState extends State<BuildsPage> {
     var authKey = await NetUtils.getAuthKey();
     var basicAuthHeader = 'Basic $authKey';
 
-    var url = '${baseUrl}/app/rest/builds/480037/artifacts/content/${fileName}';
+    var url = '${baseUrl}/app/rest/builds/${buildId}/artifacts/content/${fileName}';
 
     String savePath = await getFileDownloadPath();
 
@@ -198,8 +199,8 @@ class _BuildsPageState extends State<BuildsPage> {
                       var item = datas[index];
                       var statusIcon, color;
                       if (item.status == 'SUCCESS') {
-                        statusIcon = Icons.error;
-                        color = Colors.redAccent;
+                        statusIcon = Icons.check_circle;
+                        color = Colors.greenAccent;
                       } else if (item.status == 'FAILURE') {
                         statusIcon = Icons.error;
                         color = Colors.redAccent;
@@ -285,7 +286,7 @@ class _BuildsPageState extends State<BuildsPage> {
                                                 onPressed: () {
                                                   if ((currentFile.size /
                                                           (1024 * 1024)) >
-                                                      50.0) {
+                                                      250.0) {
                                                     return _scaffoldKey
                                                         .currentState
                                                         .showSnackBar(SnackBar(
@@ -303,7 +304,7 @@ class _BuildsPageState extends State<BuildsPage> {
                                                           ),
                                                           Expanded(
                                                             child: Text(
-                                                                'You can only download file that size less than 50Mb.'),
+                                                                'You can only download file that size less than 250Mb.'),
                                                           )
                                                         ],
                                                       ),
@@ -372,19 +373,7 @@ class _BuildsPageState extends State<BuildsPage> {
                                   return Text(snap.error);
                                 } else if (snap.hasData &&
                                     snap.data.length == 0) {
-                                  //TODO： 把这个组件抽为共通的
-                                  return Padding(
-                                    padding: EdgeInsets.all(15.0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.warning,
-                                          color: Colors.blueGrey,
-                                        ),
-                                        Text('  There is no Data')
-                                      ],
-                                    ),
-                                  );
+                                  return DataEmptyTip();
                                 }
 
                                 return LinearProgressIndicator();

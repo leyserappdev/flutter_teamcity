@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:fluro/fluro.dart';
+import '../../utils/eventBus.dart';
 import 'dart:convert';
 import '../../model/project.dart';
 import '../../utils/http.dart';
 import '../../utils/sharedPreferences.dart';
 import '../../routers/application.dart';
+import '../../widgets/components/dataEmptyTip.dart';
 
 Future<List<Project>> fetchProjects() async {
   List<Project> result = List<Project>();
@@ -38,11 +40,13 @@ class ProjectsPage extends StatefulWidget {
   bool isFavorite;
 
   @override
-  _ProjectsPageState createState() => new _ProjectsPageState(this.isFavorite);
+  _ProjectsPageState createState() =>
+      new _ProjectsPageState(this.isFavorite);
 }
 
 class _ProjectsPageState extends State<ProjectsPage> {
   bool _isFavorite;
+  String _filterText = '';
 
   SpUtil _spUtil;
 
@@ -53,6 +57,14 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   Future init() async {
     _spUtil = await SpUtil.getInstance();
+
+    eventBus.on<Event>().listen((event){
+      if (event.eventType == EventType.projectFilter){
+        setState(() {
+         _filterText = event.payload; 
+        });
+      }
+    });
   }
 
   List<String> getFavoriteProjectIds() {
@@ -109,8 +121,21 @@ class _ProjectsPageState extends State<ProjectsPage> {
             var favoriteIds = getFavoriteProjectIds();
 
             //only show leaf node
-            var leafNodesIter = datas.where(
-                (data) => data.children == null || data.children.length == 0);
+            // var leafNodesIter = datas.where(
+            //     (data) => data.children == null || data.children.length == 0);
+
+            var leafNodesIter = datas.where((data) {
+              print('rio .......................................................... _filterText: ${_filterText}');
+              if (_filterText == null || _filterText.isEmpty) {
+                return true;
+              }
+              return (data.name ?? '')
+                      .toLowerCase()
+                      .contains(_filterText.toLowerCase()) ||
+                  (data.description ?? '')
+                      .toLowerCase()
+                      .contains(_filterText.toLowerCase());
+            });
 
             if (_isFavorite) {
               leafNodesIter =
@@ -118,11 +143,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
             }
             var leafNodes = leafNodesIter.toList();
 
-            if (_isFavorite && leafNodes.length == 0) {
+            if (leafNodes.length == 0) {
               return Padding(
                 padding: EdgeInsets.all(15),
                 child: Text(
-                  'There is no favorite project.',
+                  _isFavorite ? 'There is no favorite project.' : 'There is no project',
                   style: TextStyle(fontSize: 16),
                 ),
               );
@@ -168,9 +193,13 @@ class _ProjectsPageState extends State<ProjectsPage> {
             );
           } else if (snap.hasError) {
             return Text(snap.error);
+          } else if (snap.hasData && snap.data.length == 0) {
+            return DataEmptyTip();
           }
 
-          return LinearProgressIndicator();
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );

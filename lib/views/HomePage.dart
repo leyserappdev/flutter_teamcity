@@ -41,9 +41,7 @@ class _HomePageStateful extends State<HomePage> {
             color: Colors.grey,
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              setState(() {
-                _inSearch = false;
-              });
+              _exitSearchMode();
             },
           ),
           padding: EdgeInsets.only(right: 10),
@@ -98,11 +96,16 @@ class _HomePageStateful extends State<HomePage> {
     );
   }
 
+  _exitSearchMode() {
+    setState(() {
+      _inSearch = false;
+      eventBus.fire(new Event(EventType.projectFilter, ''));
+    });
+  }
+
   Future<bool> _onBackPressed() async {
     if (_inSearch) {
-      setState(() {
-        _inSearch = false;
-      });
+      _exitSearchMode();
       return false;
     }
     return true;
@@ -117,9 +120,10 @@ class _HomePageStateful extends State<HomePage> {
           body: PageView(
             onPageChanged: (index) {
               setState(() {
-                _inSearch = false;
                 _currentPageIndex = index;
               });
+
+              _exitSearchMode();
             },
             physics: _inSearch ? NeverScrollableScrollPhysics() : null,
             controller: _controller,

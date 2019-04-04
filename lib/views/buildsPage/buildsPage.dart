@@ -217,17 +217,17 @@ class _BuildsPageState extends State<BuildsPage> {
                         title: Row(
                           children: <Widget>[
                             Expanded(
-                              child: Text('#${item.number}'),
+                              child: Text('#${item.number}', style: TextStyle(color: Colors.black),),
                             ),
                             Icon(statusIcon, color: color, size: 18.0),
                             Text(
                               ' ${item.status}',
                               style: TextStyle(
-                                  fontStyle: FontStyle.italic, fontSize: 13.0),
+                                  fontStyle: FontStyle.italic, fontSize: 13.0, color: color),
                             ),
                           ],
                         ),
-                        trailing: Icon(Icons.chevron_right),
+                        trailing: Icon(Icons.chevron_right, color: Colors.black,),
                         children: <Widget>[
                           Container(
                             child: FutureBuilder<List<Artifact>>(
@@ -261,8 +261,10 @@ class _BuildsPageState extends State<BuildsPage> {
                                                   currentFile.name
                                                           .endsWith('apk')
                                                       ? Icon(Icons.android,
+                                                          color: Colors.lightGreen,
                                                           size: 16.0)
                                                       : Icon(Icons.attach_file,
+                                                          color: Colors.lightGreen,
                                                           size: 16.0),
                                                   Expanded(
                                                     child: Text(

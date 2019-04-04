@@ -3,6 +3,7 @@ import '../../utils/util.dart';
 import '../../utils/sharedPreferences.dart';
 import '../../routers/application.dart';
 import 'package:fluro/fluro.dart';
+import 'package:package_info/package_info.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -13,6 +14,10 @@ class _ProfilePageState extends State<ProfilePage> {
   String _userName;
   String _serverUrl;
 
+  String _appName;
+  String _version;
+  String _buildNumber;
+
   void initState() {
     super.initState();
 
@@ -21,6 +26,12 @@ class _ProfilePageState extends State<ProfilePage> {
         _userName = spUtil.getString(SharedPreferencesKeys.loginUserName);
         _serverUrl = spUtil.getString(SharedPreferencesKeys.teamCityServerUrl);
       });
+    });
+
+    PackageInfo.fromPlatform().then((PackageInfo info){
+      _appName = info.appName;
+      _version = info.version;
+      _buildNumber = info.buildNumber;
     });
   }
 
@@ -32,6 +43,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    
+
     return new Container(
         child: Column(
       children: <Widget>[
@@ -47,8 +60,8 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         AboutListTile(
           icon: Icon(Icons.info),
-          applicationName: "Leyser Teamcity Build Downloader",
-          applicationVersion: "0.0.1",
+          applicationName: _appName,
+          applicationVersion: _version,
         ),
         Divider(),
         RaisedButton(

@@ -84,15 +84,24 @@ class _BuildTypePageState extends State<BuildTypePage> {
           builder: (context, snap) {
             if (snap.hasData && snap.data.length > 0) {
               var datas = snap.data.toList();
+              //把安卓应用的BuildType标记 并且提前
+              var androidAppReg = new RegExp(r'(Android\s*APP | Android)', caseSensitive: false);
+              datas.sort((pre, next){
+                int preAndroidApp = androidAppReg.allMatches(pre.name).length;
+                int nextAndroidApp = androidAppReg.allMatches(next.name).length;
+                return nextAndroidApp - preAndroidApp;
+              });
 
               return ListView.separated(
                 separatorBuilder: (context, index) => Divider(),
                 itemBuilder: (context, index) {
                   var item = datas[index];
+                  var isAndroidAppBuildType = item.name.contains(androidAppReg);
                   return ListTile(
                     key: Key(item.id),
                     title: Text(item.name),
                     trailing: Icon(Icons.chevron_right),
+                    leading: isAndroidAppBuildType ? Icon(Icons.android, color: Colors.lightGreen,) : null,
                     onTap: () => Application.router
                         .navigateTo(context, '/builds/${item.id}/${item.name}'),
                   );

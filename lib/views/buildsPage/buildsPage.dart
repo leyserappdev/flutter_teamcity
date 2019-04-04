@@ -201,7 +201,7 @@ class _BuildsPageState extends State<BuildsPage> {
                       var statusIcon, color;
                       if (item.status == 'SUCCESS') {
                         statusIcon = Icons.check_circle;
-                        color = Colors.greenAccent;
+                        color = Colors.lightGreen;
                       } else if (item.status == 'FAILURE') {
                         statusIcon = Icons.error;
                         color = Colors.redAccent;
@@ -217,17 +217,18 @@ class _BuildsPageState extends State<BuildsPage> {
                         title: Row(
                           children: <Widget>[
                             Expanded(
-                              child: Text('#${item.number}', style: TextStyle(color: Colors.black),),
+                              child: Text('#${item.number}'),
                             ),
                             Icon(statusIcon, color: color, size: 18.0),
                             Text(
                               ' ${item.status}',
+                              textAlign: TextAlign.left,
                               style: TextStyle(
-                                  fontStyle: FontStyle.italic, fontSize: 13.0, color: color),
+                                  fontStyle: FontStyle.italic, fontSize: 13.0),
                             ),
                           ],
                         ),
-                        trailing: Icon(Icons.chevron_right, color: Colors.black,),
+                        trailing: Icon(Icons.chevron_right),
                         children: <Widget>[
                           Container(
                             child: FutureBuilder<List<Artifact>>(
@@ -285,7 +286,7 @@ class _BuildsPageState extends State<BuildsPage> {
                                                 ],
                                               ),
                                               trailing: IconButton(
-                                                icon: Icon(Icons.file_download),
+                                                icon: Icon(Icons.file_download, color: Colors.blue),
                                                 onPressed: () {
                                                   if ((currentFile.size /
                                                           (1024 * 1024)) >

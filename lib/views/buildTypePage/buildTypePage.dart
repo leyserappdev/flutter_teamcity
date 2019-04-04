@@ -96,7 +96,7 @@ class _BuildTypePageState extends State<BuildTypePage> {
                 separatorBuilder: (context, index) => Divider(),
                 itemBuilder: (context, index) {
                   var item = datas[index];
-                  var isAndroidAppBuildType = item.name.contains(androidAppReg);
+                  var isAndroidAppBuildType = androidAppReg.hasMatch(item.name);
                   return ListTile(
                     key: Key(item.id),
                     title: Text(item.name),

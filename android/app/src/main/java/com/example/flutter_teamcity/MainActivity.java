@@ -1,4 +1,4 @@
-package com.example.flutter_teamcity;
+package com.grapecity.flutter_teamcity;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

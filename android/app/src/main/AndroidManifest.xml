@@ -34,7 +34,7 @@
         </activity>
         <provider
             android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
-            android:authorities="com.example.flutter_teamcity.flutter_downloader.provider"
+            android:authorities="com.grapecity.flutter_teamcity.flutter_downloader.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
